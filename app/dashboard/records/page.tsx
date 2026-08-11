@@ -201,13 +201,8 @@ export default function RecordsPage() {
       students: sortedStudents,
     });
 
-    const sanitizedName = event.companyName.replace(/[^a-zA-Z0-9_\-\s]/g, '').trim();
-    const fileName = `OD_Form_${sanitizedName}.pdf`;
-
-    // 1. Trigger the download with the correct filename
-    pdf.save(fileName);
-
-    // 2. Open in a new tab for preview
+    // Open in a new tab for preview
+    // Note: Browsers will assign a random filename if the user downloads from the preview tab
     const pdfBlob = pdf.output('blob');
     const url = URL.createObjectURL(pdfBlob);
     window.open(url, '_blank');
