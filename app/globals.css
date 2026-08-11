@@ -694,8 +694,20 @@ body {
 .record-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   flex-shrink: 0;
+}
+
+.record-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.record-actions-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border-default);
 }
 
 .record-students-badge {
@@ -910,7 +922,14 @@ body {
 
   .record-actions {
     width: 100%;
-    justify-content: flex-end;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .record-actions-divider {
+    display: none;
   }
 
   .students-toolbar {

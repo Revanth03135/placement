@@ -294,39 +294,49 @@ export default function RecordsPage() {
                 </div>
 
                 <div className="record-actions">
-                  <button
-                    className="btn btn-secondary btn-sm"
-                    onClick={() => openEditModal(event)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="btn btn-primary btn-sm"
-                    onClick={() => handleGeneratePDF(event)}
-                    disabled={event.students.length === 0}
-                  >
-                    PDF
-                  </button>
-                  <button
-                    className="btn btn-primary btn-sm"
-                    onClick={() => handleGenerateDOCX(event)}
-                    disabled={event.students.length === 0}
-                  >
-                    DOCX
-                  </button>
-                  <button
-                    className={`btn btn-sm ${
-                      event.exposed ? 'btn-expose-active' : 'btn-expose'
-                    }`}
-                    onClick={() => handleToggleExpose(event._id, event.exposed)}
-                    disabled={togglingId === event._id}
-                  >
-                    {togglingId === event._id
-                      ? '...'
-                      : event.exposed
-                      ? 'Hide'
-                      : 'Expose'}
-                  </button>
+                  <div className="record-actions-group">
+                    <button
+                      className="btn btn-secondary btn-sm"
+                      onClick={() => openEditModal(event)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className={`btn btn-sm ${
+                        event.exposed ? 'btn-expose-active' : 'btn-expose'
+                      }`}
+                      onClick={() => handleToggleExpose(event._id, event.exposed)}
+                      disabled={togglingId === event._id}
+                    >
+                      {togglingId === event._id
+                        ? '...'
+                        : event.exposed
+                        ? 'Hide'
+                        : 'Expose'}
+                    </button>
+                  </div>
+
+                  <div className="record-actions-divider" />
+
+                  <div className="record-actions-group">
+                    <button
+                      className="btn btn-primary btn-sm"
+                      onClick={() => handleGeneratePDF(event)}
+                      disabled={event.students.length === 0}
+                    >
+                      PDF
+                    </button>
+                    <button
+                      className="btn btn-primary btn-sm"
+                      onClick={() => handleGenerateDOCX(event)}
+                      disabled={event.students.length === 0}
+                    >
+                      DOCX
+                    </button>
+                  </div>
+
+                  <div className="record-actions-divider" />
+
                   <button
                     className="btn btn-danger btn-sm"
                     onClick={() => setDeletingId(event._id)}
