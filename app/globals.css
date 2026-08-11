@@ -835,6 +835,31 @@ body {
   border-top: 1px solid var(--border-default);
 }
 
+/* ============ EXPOSE TOGGLE ============ */
+.btn-expose {
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: var(--border-default);
+}
+
+.btn-expose:hover:not(:disabled) {
+  background: rgba(56, 189, 248, 0.08);
+  border-color: #38bdf8;
+  color: #38bdf8;
+}
+
+.btn-expose-active {
+  background: rgba(56, 189, 248, 0.12);
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.btn-expose-active:hover:not(:disabled) {
+  background: rgba(56, 189, 248, 0.06);
+  border-color: rgba(56, 189, 248, 0.25);
+  color: #7dd3fc;
+}
+
 /* ============ RESPONSIVE ============ */
 @media (max-width: 768px) {
   .dashboard-grid {

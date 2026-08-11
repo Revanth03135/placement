@@ -128,3 +128,45 @@ export async function DELETE(
     );
   }
 }
+
+export async function PATCH(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    await dbConnect();
+    const { id } = await params;
+    const body = await request.json();
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return NextResponse.json({ error: 'Invalid event ID' }, { status: 400 });
+    }
+
+    if (typeof body.exposed !== 'boolean') {
+      return NextResponse.json(
+        { error: 'exposed must be a boolean' },
+        { status: 400 }
+      );
+    }
+
+    const event = await Event.findByIdAndUpdate(
+      id,
+      { $set: { exposed: body.exposed } },
+      { new: true, runValidators: true }
+    )
+      .populate('students', 'rollNo name')
+      .lean();
+
+    if (!event) {
+      return NextResponse.json({ error: 'Event not found' }, { status: 404 });
+    }
+
+    return NextResponse.json(event);
+  } catch (error) {
+    console.error('Event expose toggle error:', error);
+    return NextResponse.json(
+      { error: 'Failed to update event visibility' },
+      { status: 500 }
+    );
+  }
+}

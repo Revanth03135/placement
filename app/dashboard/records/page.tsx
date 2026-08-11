@@ -18,6 +18,7 @@ interface EventRecord {
   startTime: string;
   endTime: string;
   students: Student[];
+  exposed: boolean;
   createdAt: string;
 }
 
@@ -48,6 +49,9 @@ export default function RecordsPage() {
   // Delete confirm state
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+
+  // Expose toggle state
+  const [togglingId, setTogglingId] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     try {
@@ -159,6 +163,27 @@ export default function RecordsPage() {
     } finally {
       setDeleting(false);
       setDeletingId(null);
+    }
+  }
+
+  async function handleToggleExpose(eventId: string, currentExposed: boolean) {
+    setTogglingId(eventId);
+    try {
+      const res = await fetch(`/api/events/${eventId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ exposed: !currentExposed }),
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setEvents((prev) =>
+          prev.map((e) => (e._id === eventId ? updated : e))
+        );
+      }
+    } catch {
+      setError('Failed to update visibility');
+    } finally {
+      setTogglingId(null);
     }
   }
 
@@ -288,6 +313,19 @@ export default function RecordsPage() {
                     disabled={event.students.length === 0}
                   >
                     DOCX
+                  </button>
+                  <button
+                    className={`btn btn-sm ${
+                      event.exposed ? 'btn-expose-active' : 'btn-expose'
+                    }`}
+                    onClick={() => handleToggleExpose(event._id, event.exposed)}
+                    disabled={togglingId === event._id}
+                  >
+                    {togglingId === event._id
+                      ? '...'
+                      : event.exposed
+                      ? 'Hide'
+                      : 'Expose'}
                   </button>
                   <button
                     className="btn btn-danger btn-sm"

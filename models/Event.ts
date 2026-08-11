@@ -7,6 +7,7 @@ export interface IEvent extends Document {
   startTime: string;
   endTime: string;
   students: Types.ObjectId[];
+  exposed: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -47,6 +48,10 @@ const EventSchema = new Schema<IEvent>(
         ref: 'Student',
       },
     ],
+    exposed: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
