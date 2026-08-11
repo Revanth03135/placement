@@ -152,7 +152,7 @@ export async function PATCH(
     const event = await Event.findByIdAndUpdate(
       id,
       { $set: { exposed: body.exposed } },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true, strict: false }
     )
       .populate('students', 'rollNo name')
       .lean();
