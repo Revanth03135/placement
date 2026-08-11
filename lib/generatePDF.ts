@@ -101,39 +101,58 @@ export function generateODPdf(event: EventData): jsPDF {
   // Blank line
   y += 6;
 
-  // Company Name
+  const rightColX = 135;
+  const colGap = 5;
+
+  // Company Name & Event Row
   y += 8;
   doc.setFont('helvetica', 'bold');
   doc.text('Company Name: ', marginLeft, y);
   const cnLabelWidth = doc.getTextWidth('Company Name: ');
   doc.setFont('helvetica', 'normal');
-  doc.text(`${event.companyName}`, marginLeft + cnLabelWidth, y);
+  
+  // Wrap company name so it doesn't bleed into the right column
+  const maxCompanyWidth = rightColX - (marginLeft + cnLabelWidth) - colGap;
+  const companyLines = doc.splitTextToSize(event.companyName, maxCompanyWidth);
+  doc.text(companyLines, marginLeft + cnLabelWidth, y);
 
-  // Event
-  y += 6;
+  // Event (right column)
   doc.setFont('helvetica', 'bold');
-  doc.text('Event: ', marginLeft, y);
+  doc.text('Event: ', rightColX, y);
   const evLabelWidth = doc.getTextWidth('Event: ');
   doc.setFont('helvetica', 'normal');
-  doc.text(event.eventType, marginLeft + evLabelWidth, y);
+  
+  const maxEventWidth = pageWidth - marginRight - (rightColX + evLabelWidth);
+  const eventLines = doc.splitTextToSize(event.eventType, maxEventWidth);
+  doc.text(eventLines, rightColX + evLabelWidth, y);
 
+  // Adjust Y based on the tallest column
+  const maxLinesRow1 = Math.max(companyLines.length, eventLines.length);
+  y += (maxLinesRow1 - 1) * 5.5;
+
+  // Gap between rows
   y += 8;
 
-  // Date & Time
+  // Date & Time & Number of Students Row
   doc.setFont('helvetica', 'bold');
   doc.text('Date & Time : ', marginLeft, y);
   const dtLabelWidth = doc.getTextWidth('Date & Time : ');
   doc.setFont('helvetica', 'normal');
+  
   const dateTimeText = `${formattedDate} & ${event.startTime} \u2013 ${event.endTime}`;
-  doc.text(dateTimeText, marginLeft + dtLabelWidth, y);
+  const maxDateTimeWidth = rightColX - (marginLeft + dtLabelWidth) - colGap;
+  const dateTimeLines = doc.splitTextToSize(dateTimeText, maxDateTimeWidth);
+  doc.text(dateTimeLines, marginLeft + dtLabelWidth, y);
 
-  // Number of Students
-  y += 6;
+  // Number of Students (right column)
   doc.setFont('helvetica', 'bold');
-  doc.text('Number of Students : ', marginLeft, y);
+  doc.text('Number of Students : ', rightColX, y);
   const nsLabelWidth = doc.getTextWidth('Number of Students : ');
   doc.setFont('helvetica', 'normal');
-  doc.text(String(studentCount), marginLeft + nsLabelWidth, y);
+  doc.text(String(studentCount), rightColX + nsLabelWidth, y);
+
+  const maxLinesRow2 = dateTimeLines.length;
+  y += (maxLinesRow2 - 1) * 5.5;
 
   // Blank line
   y += 6;
