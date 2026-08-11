@@ -10,7 +10,6 @@ const StudentSchema = new Schema<IStudent>({
   name: { type: String, required: true, trim: true },
 });
 
-StudentSchema.index({ rollNo: 1 });
 
 const Student: Model<IStudent> =
   mongoose.models.Student || mongoose.model<IStudent>('Student', StudentSchema);
