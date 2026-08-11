@@ -913,3 +913,208 @@ body {
     justify-content: flex-end;
   }
 }
+
+/* TimePicker Modal */
+.tp-container {
+  position: relative;
+  width: 100%;
+}
+
+.tp-input {
+  background: var(--bg-dark);
+  border: 1px solid var(--border-color);
+  padding: 12px 16px;
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tp-input:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.tp-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.tp-modal {
+  background: var(--bg-dark);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 320px;
+  padding: 24px;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
+  animation: tpSlideUp 0.3s ease-out;
+}
+
+@keyframes tpSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.tp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.tp-time-display {
+  display: flex;
+  align-items: center;
+  font-size: 32px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  gap: 4px;
+}
+
+.tp-time-part {
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.tp-time-part:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tp-time-part.active {
+  color: var(--primary-color);
+  background: rgba(46, 204, 113, 0.1);
+}
+
+.tp-colon {
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.tp-period-toggles {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.tp-period-btn {
+  background: transparent;
+  border: none;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tp-period-btn:first-child {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.tp-period-btn.active {
+  background: var(--primary-color);
+  color: #000;
+}
+
+.tp-clock-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.tp-clock-face {
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  position: relative;
+}
+
+.tp-clock-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background: var(--primary-color);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.tp-clock-hand {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 38%;
+  background: var(--primary-color);
+  transform-origin: bottom center;
+  margin-top: -38%;
+  margin-left: -1px;
+  z-index: 1;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tp-clock-hand::after {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: -11px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--primary-color);
+}
+
+.tp-clock-number {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  transition: all 0.2s;
+  z-index: 3;
+}
+
+.tp-clock-number:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.tp-clock-number.selected {
+  color: #000;
+  font-weight: 600;
+}
+
+.tp-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}

@@ -1,20 +1,16 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
+import TimePicker from '@/components/TimePicker';
 
 export default function AddEventPage() {
   const [companyName, setCompanyName] = useState('');
   const [eventType, setEventType] = useState('');
   const [date, setDate] = useState('');
-  const [startHour, setStartHour] = useState('09');
-  const [startMinute, setStartMinute] = useState('00');
-  const [startPeriod, setStartPeriod] = useState('AM');
-  const [endHour, setEndHour] = useState('05');
-  const [endMinute, setEndMinute] = useState('00');
-  const [endPeriod, setEndPeriod] = useState('PM');
+  const [startTime, setStartTime] = useState('09:00 AM');
+  const [endTime, setEndTime] = useState('05:00 PM');
 
-  const hoursList = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
-  const minutesList = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
+
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
@@ -24,7 +20,7 @@ export default function AddEventPage() {
     setError('');
     setSuccess('');
 
-    if (!companyName.trim() || !eventType || !date || !startHour || !startMinute || !endHour || !endMinute) {
+    if (!companyName.trim() || !eventType || !date || !startTime || !endTime) {
       setError('All fields are required');
       return;
     }
@@ -39,8 +35,8 @@ export default function AddEventPage() {
           companyName: companyName.trim(),
           eventType,
           date,
-          startTime: `${startHour}:${startMinute} ${startPeriod}`,
-          endTime: `${endHour}:${endMinute} ${endPeriod}`,
+          startTime,
+          endTime,
         }),
       });
 
@@ -53,12 +49,8 @@ export default function AddEventPage() {
         setCompanyName('');
         setEventType('');
         setDate('');
-        setStartHour('09');
-        setStartMinute('00');
-        setStartPeriod('AM');
-        setEndHour('05');
-        setEndMinute('00');
-        setEndPeriod('PM');
+        setStartTime('09:00 AM');
+        setEndTime('05:00 PM');
       }
     } catch {
       setError('Something went wrong. Please try again.');
@@ -133,35 +125,19 @@ export default function AddEventPage() {
 
           <div className="form-row">
             <div className="form-group">
-              <label className="form-label">Start Time</label>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <select className="form-select" value={startHour} onChange={(e) => setStartHour(e.target.value)}>
-                  {hoursList.map(h => <option key={h} value={h}>{h}</option>)}
-                </select>
-                <select className="form-select" value={startMinute} onChange={(e) => setStartMinute(e.target.value)}>
-                  {minutesList.map(m => <option key={m} value={m}>{m}</option>)}
-                </select>
-                <select className="form-select" value={startPeriod} onChange={(e) => setStartPeriod(e.target.value)}>
-                  <option value="AM">AM</option>
-                  <option value="PM">PM</option>
-                </select>
-              </div>
+              <TimePicker
+                label="Start Time"
+                value={startTime}
+                onChange={setStartTime}
+              />
             </div>
 
             <div className="form-group">
-              <label className="form-label">End Time</label>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <select className="form-select" value={endHour} onChange={(e) => setEndHour(e.target.value)}>
-                  {hoursList.map(h => <option key={h} value={h}>{h}</option>)}
-                </select>
-                <select className="form-select" value={endMinute} onChange={(e) => setEndMinute(e.target.value)}>
-                  {minutesList.map(m => <option key={m} value={m}>{m}</option>)}
-                </select>
-                <select className="form-select" value={endPeriod} onChange={(e) => setEndPeriod(e.target.value)}>
-                  <option value="AM">AM</option>
-                  <option value="PM">PM</option>
-                </select>
-              </div>
+              <TimePicker
+                label="End Time"
+                value={endTime}
+                onChange={setEndTime}
+              />
             </div>
           </div>
 
