@@ -937,13 +937,15 @@ body {
     top: 0;
     right: -250px;
     width: 250px;
-    height: 100dvh;
+    height: max-content;
     background: var(--bg-secondary);
     border-left: 1px solid var(--border-default);
+    border-bottom: 1px solid var(--border-default);
+    border-bottom-left-radius: 16px;
     z-index: 1000;
     transition: right var(--transition-medium);
     padding: 60px 20px 20px;
-    box-shadow: -4px 0 24px rgba(0,0,0,0.4);
+    box-shadow: -4px 4px 24px rgba(0,0,0,0.4);
   }
   .sidebar-wrapper.open {
     right: 0;
@@ -988,8 +990,9 @@ body {
     margin-top: 24px;
     padding-top: 24px;
     border-top: 1px solid var(--border-default);
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
     gap: 16px;
     width: 100%;
   }
