@@ -201,10 +201,9 @@ export default function RecordsPage() {
       students: sortedStudents,
     });
 
-    // Open in new tab for preview and download
-    const pdfBlob = pdf.output('blob');
-    const url = URL.createObjectURL(pdfBlob);
-    window.open(url, '_blank');
+    // Download directly with proper filename (matching DOCX behavior)
+    const sanitizedName = event.companyName.replace(/[^a-zA-Z0-9_\-\s]/g, '').trim();
+    pdf.save(`OD_Form_${sanitizedName}.pdf`);
   }
 
   function handleGenerateDOCX(event: EventRecord) {

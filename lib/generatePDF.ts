@@ -101,28 +101,25 @@ export function generateODPdf(event: EventData): jsPDF {
   // Blank line
   y += 6;
 
-  const rightColX = 135;
-
-  // Company Name and Event line
+  // Company Name
   y += 8;
   doc.setFont('helvetica', 'bold');
   doc.text('Company Name: ', marginLeft, y);
   const cnLabelWidth = doc.getTextWidth('Company Name: ');
   doc.setFont('helvetica', 'normal');
-  const companyText = `${event.companyName}`;
-  doc.text(companyText, marginLeft + cnLabelWidth, y);
+  doc.text(`${event.companyName}`, marginLeft + cnLabelWidth, y);
 
-  // Event on same line, right column
+  // Event
+  y += 6;
   doc.setFont('helvetica', 'bold');
-  doc.text('Event: ', rightColX, y);
+  doc.text('Event: ', marginLeft, y);
   const evLabelWidth = doc.getTextWidth('Event: ');
   doc.setFont('helvetica', 'normal');
-  doc.text(event.eventType, rightColX + evLabelWidth, y);
+  doc.text(event.eventType, marginLeft + evLabelWidth, y);
 
-  // Reduced gap between Company/Event row and Date/Time row
   y += 8;
 
-  // Date & Time and Number of Students line
+  // Date & Time
   doc.setFont('helvetica', 'bold');
   doc.text('Date & Time : ', marginLeft, y);
   const dtLabelWidth = doc.getTextWidth('Date & Time : ');
@@ -130,12 +127,13 @@ export function generateODPdf(event: EventData): jsPDF {
   const dateTimeText = `${formattedDate} & ${event.startTime} \u2013 ${event.endTime}`;
   doc.text(dateTimeText, marginLeft + dtLabelWidth, y);
 
-  // Number of Students on same line, right column
+  // Number of Students
+  y += 6;
   doc.setFont('helvetica', 'bold');
-  doc.text('Number of Students : ', rightColX, y);
+  doc.text('Number of Students : ', marginLeft, y);
   const nsLabelWidth = doc.getTextWidth('Number of Students : ');
   doc.setFont('helvetica', 'normal');
-  doc.text(String(studentCount), rightColX + nsLabelWidth, y);
+  doc.text(String(studentCount), marginLeft + nsLabelWidth, y);
 
   // Blank line
   y += 6;
