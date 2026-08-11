@@ -236,24 +236,28 @@ export async function generateODDocx(event: EventData) {
                 ],
               }),
               ...event.students.map(
-                (student, index) =>
-                  new TableRow({
+                (student, index) => {
+                  const isLastFew = index >= event.students.length - 5;
+                  return new TableRow({
+                    cantSplit: true,
                     children: [
                       new TableCell({
-                        children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: String(index + 1), size: 22, font: 'Arial' })], spacing: { before: 100, after: 100 } })],
+                        children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: String(index + 1), size: 22, font: 'Arial' })], spacing: { before: 100, after: 100 }, keepNext: isLastFew })],
                       }),
                       new TableCell({
-                        children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: student.rollNo, size: 22, font: 'Arial' })], spacing: { before: 100, after: 100 } })],
+                        children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: student.rollNo, size: 22, font: 'Arial' })], spacing: { before: 100, after: 100 }, keepNext: isLastFew })],
                       }),
                       new TableCell({
-                        children: [new Paragraph({ indent: { left: 100 }, children: [new TextRun({ text: student.name, size: 22, font: 'Arial' })], spacing: { before: 100, after: 100 } })],
+                        children: [new Paragraph({ indent: { left: 100 }, children: [new TextRun({ text: student.name, size: 22, font: 'Arial' })], spacing: { before: 100, after: 100 }, keepNext: isLastFew })],
                       }),
                     ],
-                  })
+                  });
+                }
               ),
             ],
           }),
           new Paragraph({
+            keepNext: true,
             children: [
               new TextRun({
                 text: 'The above students may be provided attendance for the mentioned date and session.',

@@ -184,15 +184,6 @@ export function generateODPdf(event: EventData): jsPDF {
   const nameColWidth = 90; // Reduced total width, not full page width
   const rowHeight = 7;
 
-  // Calculate how many students fit on page 1
-  // We use all space down to marginBottom. The closing area will automatically check if it needs a new page.
-  const availableOnPage1 = pageHeight - marginBottom - y;
-  const studentsPerPage1 = Math.max(0, Math.floor(availableOnPage1 / rowHeight) - 1); // -1 for header
-
-  // Students per subsequent page
-  const availableOnSubsequentPage = pageHeight - marginTop - marginBottom;
-  const studentsPerSubsequentPage = Math.floor(availableOnSubsequentPage / rowHeight) - 1; // -1 for header
-
   // Function to draw table header
   function drawTableHeader(doc: jsPDF, startY: number): number {
     doc.setFont('helvetica', 'bold');
@@ -233,12 +224,6 @@ export function generateODPdf(event: EventData): jsPDF {
 
   // Function to draw closing section
   function drawClosingSection(doc: jsPDF, startY: number) {
-    const requiredSpace = 60; // 10 for margin + 10 for text + 40 for signature
-    if (pageHeight - marginBottom - startY < requiredSpace) {
-      doc.addPage();
-      startY = marginTop;
-    }
-
     let cy = startY + 10;
 
     doc.setFont('helvetica', 'normal');
@@ -259,51 +244,63 @@ export function generateODPdf(event: EventData): jsPDF {
     );
   }
 
-  // Draw students on page 1
+  const closingSpace = 60;
+  const minStudentsOnLastPage = 5;
+
+  let remainingStudents = studentCount;
+  let currentY = y;
+  let pageIndex = 1;
   let studentIndex = 0;
-  const studentsOnPage1 = Math.min(studentsPerPage1, studentCount);
 
-  if (studentsOnPage1 > 0) {
-    y += 4;
-    y = drawTableHeader(doc, y);
-    for (let i = 0; i < studentsOnPage1; i++) {
-      y = drawStudentRow(doc, event.students[studentIndex], y, studentIndex + 1);
-      studentIndex++;
+  while (remainingStudents > 0) {
+    const isFirstPage = pageIndex === 1;
+    let availableSpace = pageHeight - marginBottom - currentY;
+    
+    let maxStudentsFit = Math.floor((availableSpace - rowHeight) / rowHeight);
+    if (maxStudentsFit < 0) maxStudentsFit = 0;
+
+    // Enforce at least 5 students on the last page if there are more than 5 students in total
+    if (remainingStudents > minStudentsOnLastPage) {
+      const leftOver = remainingStudents - maxStudentsFit;
+      if (leftOver > 0 && leftOver < minStudentsOnLastPage) {
+        maxStudentsFit = remainingStudents - minStudentsOnLastPage;
+      }
+    }
+
+    let studentsToDraw = Math.min(maxStudentsFit, remainingStudents);
+    
+    // Check if drawing these students will orphan the closing section
+    if (studentsToDraw === remainingStudents) {
+      const spaceUsed = rowHeight + (studentsToDraw * rowHeight);
+      const spaceLeft = availableSpace - spaceUsed;
+      
+      if (spaceLeft < closingSpace) {
+        if (remainingStudents > minStudentsOnLastPage) {
+          studentsToDraw = remainingStudents - minStudentsOnLastPage;
+        } else {
+          // Push all remaining students to the next page so they stay with the signatures
+          studentsToDraw = 0;
+        }
+      }
+    }
+
+    if (studentsToDraw > 0) {
+      if (isFirstPage) currentY += 4;
+      currentY = drawTableHeader(doc, currentY);
+      for (let i = 0; i < studentsToDraw; i++) {
+        currentY = drawStudentRow(doc, event.students[studentIndex], currentY, studentIndex + 1);
+        studentIndex++;
+      }
+      remainingStudents -= studentsToDraw;
+    }
+
+    if (remainingStudents > 0) {
+      doc.addPage();
+      pageIndex++;
+      currentY = marginTop;
     }
   }
 
-  // If all students fit on page 1
-  if (studentIndex >= studentCount) {
-    drawClosingSection(doc, y);
-    return doc;
-  }
-
-  // Continue on subsequent pages
-  while (studentIndex < studentCount) {
-    doc.addPage();
-    let py = marginTop;
-
-    // Determine how many students on this page
-    const remaining = studentCount - studentIndex;
-    const isLastPage = remaining <= studentsPerSubsequentPage;
-    const studentsOnThisPage = isLastPage
-      ? remaining
-      : studentsPerSubsequentPage;
-
-    // Draw table header
-    py = drawTableHeader(doc, py);
-
-    // Draw student rows
-    for (let i = 0; i < studentsOnThisPage; i++) {
-      py = drawStudentRow(doc, event.students[studentIndex], py, studentIndex + 1);
-      studentIndex++;
-    }
-
-    // If this is the last page, draw closing section
-    if (studentIndex >= studentCount) {
-      drawClosingSection(doc, py);
-    }
-  }
-
+  drawClosingSection(doc, currentY);
   return doc;
 }
