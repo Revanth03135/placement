@@ -201,9 +201,16 @@ export default function RecordsPage() {
       students: sortedStudents,
     });
 
-    // Download directly with proper filename (matching DOCX behavior)
     const sanitizedName = event.companyName.replace(/[^a-zA-Z0-9_\-\s]/g, '').trim();
-    pdf.save(`OD_Form_${sanitizedName}.pdf`);
+    const fileName = `OD_Form_${sanitizedName}.pdf`;
+
+    // 1. Trigger the download with the correct filename
+    pdf.save(fileName);
+
+    // 2. Open in a new tab for preview
+    const pdfBlob = pdf.output('blob');
+    const url = URL.createObjectURL(pdfBlob);
+    window.open(url, '_blank');
   }
 
   function handleGenerateDOCX(event: EventRecord) {
