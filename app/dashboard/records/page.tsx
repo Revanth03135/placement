@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { generateODPdf } from '@/lib/generatePDF';
 import { generateODDocx } from '@/lib/generateDOCX';
+import TimePicker from '@/components/TimePicker';
 
 interface Student {
   _id: string;
@@ -35,16 +36,9 @@ export default function RecordsPage() {
   );
   const [editSearch, setEditSearch] = useState('');
   const [editSaving, setEditSaving] = useState(false);
-  const [editStartHour, setEditStartHour] = useState('09');
-  const [editStartMinute, setEditStartMinute] = useState('00');
-  const [editStartPeriod, setEditStartPeriod] = useState('AM');
-  const [editEndHour, setEditEndHour] = useState('05');
-  const [editEndMinute, setEditEndMinute] = useState('00');
-  const [editEndPeriod, setEditEndPeriod] = useState('PM');
+  const [editStartTime, setEditStartTime] = useState('09:00 AM');
+  const [editEndTime, setEditEndTime] = useState('05:00 PM');
   const [editDate, setEditDate] = useState('');
-
-  const hoursList = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
-  const minutesList = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
 
   // Delete confirm state
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -78,18 +72,8 @@ export default function RecordsPage() {
     setEditingEvent(event);
     setEditSelectedIds(new Set(event.students.map((s) => s._id)));
     
-    // "09:00 AM" -> ["09:00", "AM"]
-    const [sTime, sPeriod] = event.startTime.split(' ');
-    const [sH, sM] = sTime.split(':');
-    setEditStartHour(sH);
-    setEditStartMinute(sM);
-    setEditStartPeriod(sPeriod);
-
-    const [eTime, ePeriod] = event.endTime.split(' ');
-    const [eH, eM] = eTime.split(':');
-    setEditEndHour(eH);
-    setEditEndMinute(eM);
-    setEditEndPeriod(ePeriod);
+    setEditStartTime(event.startTime);
+    setEditEndTime(event.endTime);
     
     // Convert to local YYYY-MM-DD for the date input
     const d = new Date(event.date);
@@ -129,8 +113,8 @@ export default function RecordsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           students: Array.from(editSelectedIds),
-          startTime: `${editStartHour}:${editStartMinute} ${editStartPeriod}`,
-          endTime: `${editEndHour}:${editEndMinute} ${editEndPeriod}`,
+          startTime: editStartTime,
+          endTime: editEndTime,
           date: new Date(editDate).toISOString(),
         }),
       });
@@ -377,34 +361,18 @@ export default function RecordsPage() {
               </div>
               <div className="form-row">
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label className="form-label">Start Time</label>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <select className="form-input" value={editStartHour} onChange={(e) => setEditStartHour(e.target.value)} style={{ padding: '8px 12px' }}>
-                      {hoursList.map(h => <option key={h} value={h}>{h}</option>)}
-                    </select>
-                    <select className="form-input" value={editStartMinute} onChange={(e) => setEditStartMinute(e.target.value)} style={{ padding: '8px 12px' }}>
-                      {minutesList.map(m => <option key={m} value={m}>{m}</option>)}
-                    </select>
-                    <select className="form-input" value={editStartPeriod} onChange={(e) => setEditStartPeriod(e.target.value)} style={{ padding: '8px 12px' }}>
-                      <option value="AM">AM</option>
-                      <option value="PM">PM</option>
-                    </select>
-                  </div>
+                  <TimePicker
+                    label="Start Time"
+                    value={editStartTime}
+                    onChange={setEditStartTime}
+                  />
                 </div>
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label className="form-label">End Time</label>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <select className="form-input" value={editEndHour} onChange={(e) => setEditEndHour(e.target.value)} style={{ padding: '8px 12px' }}>
-                      {hoursList.map(h => <option key={h} value={h}>{h}</option>)}
-                    </select>
-                    <select className="form-input" value={editEndMinute} onChange={(e) => setEditEndMinute(e.target.value)} style={{ padding: '8px 12px' }}>
-                      {minutesList.map(m => <option key={m} value={m}>{m}</option>)}
-                    </select>
-                    <select className="form-input" value={editEndPeriod} onChange={(e) => setEditEndPeriod(e.target.value)} style={{ padding: '8px 12px' }}>
-                      <option value="AM">AM</option>
-                      <option value="PM">PM</option>
-                    </select>
-                  </div>
+                  <TimePicker
+                    label="End Time"
+                    value={editEndTime}
+                    onChange={setEditEndTime}
+                  />
                 </div>
               </div>
             </div>
